@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Trends | AI Career Guide</title>
+    <!-- Import Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@500;700&display=swap');
+
+        :root {
+            --primary: #00f2fe;
+            --secondary: #4facfe;
+            --accent: #ffcc00;
+            --success: #00e676;
+            --warning: #ff9800;
+            --danger: #ff5252;
+            --purple: #b224ef;
+            --bg: #0b0f19;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(138, 43, 226, 0.1), transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(0, 242, 254, 0.1), transparent 40%);
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 40px;
+            background: rgba(11, 15, 25, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--card-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .back-btn {
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        .back-btn:hover {
+            color: var(--primary);
+        }
+
+        nav h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            background: linear-gradient(135deg, #fff, var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Dashboard Container */
+        .dashboard {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(178, 36, 239, 0.3);
+        }
+
+        .header p {
+            font-size: 18px;
+            color: #94a3b8;
+        }
+
+        /* Industry Filter Row */
+        .filter-row {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-family: 'Outfit', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-btn:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        .filter-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #000;
+            border-color: transparent;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0, 242, 254, 0.3);
+        }
+
+        /* Dashboard Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 30px;
+        }
+
+        /* Card Stylings */
+        .action-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 30px;
+            backdrop-filter: blur(16px);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            min-height: 400px; /* Space for charts */
+        }
+
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, var(--card-color-1, var(--primary)), var(--card-color-2, var(--secondary)));
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .action-card:hover::before {
+            opacity: 1;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-header h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #fff;
+        }
+        
+        /* Chart Containers */
+        .chart-container {
+            position: relative;
+            height: 250px;
+            width: 100%;
+            margin-top: auto; /* Push to bottom */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Specific Layouts */
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        /* Trending List Specific */
+        .trending-list {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+        .trending-list li {
+            padding: 12px 15px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .trending-list li span:first-child {
+            color: #fff;
+            font-weight: 600;
+        }
+        .trending-list li span:last-child {
+            color: var(--success);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Salary Tiers */
+        .salary-tiers {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .salary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 1px dotted rgba(255,255,255,0.1);
+        }
+        .salary-row:last-child { border: none;}
+        .tier-label { color: #94a3b8; font-size: 14px;}
+        .tier-amount { color: #fff; font-size: 20px; font-weight: bold; font-family: 'Space Grotesk', sans-serif;}
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="back-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            Back to Home
+        </a>
+        <h2>Market Trends</h2>
+        <div style="width: 120px;"></div> 
+    </nav>
+
+    <div class="dashboard">
+        <div class="header">
+            <h1 id="market-heading">Global Market Insights</h1>
+            <p id="market-subheading">Live data visualisations comparing your profile against industry demands.</p>
+        </div>
+        
+        <!-- 5. Industry Filters -->
+        <div class="filter-row" id="industryFilters">
+            <button class="filter-btn active" onclick="setIndustry('All')">Global & Uploaded Data</button>
+            <button class="filter-btn" onclick="setIndustry('AI & Data')">AI & Data Science</button>
+            <button class="filter-btn" onclick="setIndustry('Finance')">FinTech & Finance</button>
+            <button class="filter-btn" onclick="setIndustry('Healthcare')">Health Tech</button>
+        </div>
+
+        <div class="grid">
+            
+            <!-- 1. Trending Careers (List Format) -->
+            <div class="action-card" style="--card-color-1: #ff5252; --card-color-2: #f48fb1;">
+                <div class="card-header">
+                    <h3>🔥 Fastest Growing Careers</h3>
+                </div>
+                <p style="color:#94a3b8; font-size:14px; margin-bottom:15px;">Year-over-Year Growth</p>
+                <ul class="trending-list" id="trending-list-container">
+                    <!-- Injected via JS -->
+                </ul>
+            </div>
+
+            <!-- 2. Salary Insights -->
+            <div class="action-card" style="--card-color-1: #00e676; --card-color-2: #1de9b6;">
+                <div class="card-header">
+                    <h3>💰 Salary Insights</h3>
+                </div>
+                <p style="color:#94a3b8; font-size:14px; margin-bottom:15px;" id="salary-subtitle">Average ranges for your target path</p>
+                <div class="salary-tiers" id="salary-container">
+                    <!-- Injected via JS -->
+                </div>
+                <div style="font-size:12px; color:rgba(255,255,255,0.4); margin-top:auto; text-align:center;">
+                    * Data generalized for Indian markets (INR).
+                </div>
+            </div>
+
+            <!-- 3. Skill Demand (Bar Chart) -->
+            <div class="action-card full-width" style="--card-color-1: #00f2fe; --card-color-2: #4facfe;">
+                <div class="card-header">
+                    <h3>📊 Analyze Skill Demand</h3>
+                </div>
+                <p style="color:#94a3b8; font-size:14px; margin-bottom:15px;">Most requested technologies in job postings vs. Your Skills</p>
+                <div class="chart-container" style="height: 300px;">
+                    <canvas id="skillDemandChart"></canvas>
+                </div>
+            </div>
+
+            <!-- 4. Future Predictions (Pie/Doughnut Chart) -->
+            <div class="action-card full-width" style="--card-color-1: #b224ef; --card-color-2: #7579ff;">
+                <div class="card-header">
+                    <h3>🔮 AI 5-Year Job Predictions</h3>
+                </div>
+                <p style="color:#94a3b8; font-size:14px; margin-bottom:15px; text-align:center;">Projected market share of emerging roles (2031)</p>
+                <div class="chart-container" style="height: 350px;">
+                    <canvas id="futurePredictionsChart"></canvas>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Global Chart Instances
+        let demandChartInstance = null;
+        let predictionChartInstance = null;
+
+        // User Data State
+        let userInterests = "Technology";
+        let userSkills = [];
+        let currentIndustry = "All";
+
+        // Chart.js Global Defaults for Dark Theme
+        Chart.defaults.color = '#94a3b8';
+        Chart.defaults.font.family = "'Outfit', sans-serif";
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // Read from LocalStorage
+            userInterests = localStorage.getItem('career_interests') || "Technology";
+            const skillsRaw = localStorage.getItem('career_skills') || "Python, SQL";
+            userSkills = skillsRaw.split(',').map(s => s.trim());
+
+            document.getElementById('market-subheading').innerText = `Live data visualisations tailored to your interest in ${userInterests}.`;
+
+            // Initialize Dashboard
+            updateDashboard(currentIndustry);
+        });
+
+        // Interactive Filter Logic
+        function setIndustry(industry) {
+            currentIndustry = industry;
+            
+            // Update UI Buttons
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Re-render Data
+            updateDashboard(industry);
+        }
+
+        function updateDashboard(industry) {
+            renderTrendingList(industry);
+            renderSalary(industry);
+            renderDemandChart(industry);
+            renderPredictionChart(industry);
+        }
+
+        // 1. Trending List Logic
+        function renderTrendingList(industry) {
+            const container = document.getElementById('trending-list-container');
+            let data = [];
+
+            if (industry === 'AI & Data') {
+                data = [
+                    { role: "Generative AI Engineer", growth: "+145%" },
+                    { role: "Data Ethicist", growth: "+92%" },
+                    { role: "Vector Database Admin", growth: "+78%" }
+                ];
+            } else if (industry === 'Finance') {
+                data = [
+                    { role: "DeFi Architect", growth: "+110%" },
+                    { role: "Quantitative Analyst", growth: "+65%" },
+                    { role: "Fraud Detection Engineer", growth: "+54%" }
+                ];
+            } else if (industry === 'Healthcare') {
+                data = [
+                    { role: "Bioinformatics Scientist", growth: "+85%" },
+                    { role: "Telemedicine Platform Dev", growth: "+70%" },
+                    { role: "Medical AI Integrator", growth: "+62%" }
+                ];
+            } else {
+                // "All" / User's Uploaded Data Default
+                data = [
+                    { role: `${userInterests} Lead`, growth: "+120%" },
+                    { role: "Cloud Security Specialist", growth: "+95%" },
+                    { role: "Full Stack Engineer", growth: "+45%" }
+                ];
+            }
+
+            let html = '';
+            data.forEach(item => {
+                html += `
+                    <li>
+                        <span>${item.role}</span>
+                        <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg> ${item.growth}</span>
+                    </li>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // 2. Salary Logic
+        function renderSalary(industry) {
+            const container = document.getElementById('salary-container');
+            const subtitle = document.getElementById('salary-subtitle');
+            
+            // Base salaries in INR
+            let base = 800000;
+            if(industry === 'AI & Data') base = 1200000;
+            else if(industry === 'Finance') base = 1000000;
+            else if(industry === 'Healthcare') base = 900000;
+            else base = 700000; // Baseline based on upload
+
+            subtitle.innerText = `Average ranges for ${industry === 'All' ? userInterests : industry} sector`;
+
+            container.innerHTML = `
+                <div class="salary-row">
+                    <span class="tier-label">Entry Level (0-2 YOE)</span>
+                    <span class="tier-amount">₹${(base * 0.7).toLocaleString('en-IN')}</span>
+                </div>
+                <div class="salary-row">
+                    <span class="tier-label">Mid Level (3-5 YOE)</span>
+                    <span class="tier-amount" style="color:var(--success)">₹${(base).toLocaleString('en-IN')}</span>
+                </div>
+                <div class="salary-row">
+                    <span class="tier-label">Senior (5+ YOE)</span>
+                    <span class="tier-amount" style="color:var(--primary)">₹${(base * 1.8).toLocaleString('en-IN')}+</span>
+                </div>
+            `;
+        }
+
+        // 3. Bar Chart Logic (Chart.js)
+        function renderDemandChart(industry) {
+            const ctx = document.getElementById('skillDemandChart').getContext('2d');
+            
+            // Destroy existing chart to prevent overlap bugs
+            if (demandChartInstance) {
+                demandChartInstance.destroy();
+            }
+
+            // Combine user skills with generic highly demanded skills
+            let labels = [];
+            let dataPoints = [];
+            let bgColors = [];
+
+            // Add top 2 user skills First
+            const u1 = userSkills[0] || "Your Skill 1";
+            const u2 = userSkills[1] || "Your Skill 2";
+            
+            // Mock market demand values
+            let d1 = Math.floor(Math.random() * 40) + 40; // 40-80
+            let d2 = Math.floor(Math.random() * 40) + 30; // 30-70
+
+            labels.push(`${u1} (Yours)`); dataPoints.push(d1); bgColors.push('rgba(0, 242, 254, 0.8)');
+            labels.push(`${u2} (Yours)`); dataPoints.push(d2); bgColors.push('rgba(0, 242, 254, 0.6)');
+
+            // Add Industry Specific Demands
+            if (industry === 'AI & Data') {
+                labels.push('PyTorch', 'AWS', 'Docker');
+                dataPoints.push(95, 85, 75);
+                bgColors.push('rgba(255, 204, 0, 0.5)', 'rgba(255, 204, 0, 0.5)', 'rgba(255, 204, 0, 0.5)');
+            } else if (industry === 'Finance') {
+                labels.push('Blockchain', 'C++', 'Financial Modeling');
+                dataPoints.push(85, 90, 70);
+                bgColors.push('rgba(255, 204, 0, 0.5)', 'rgba(255, 204, 0, 0.5)', 'rgba(255, 204, 0, 0.5)');
+            } else {
+                labels.push('React', 'Node.js', 'Cybersecurity');
+                dataPoints.push(88, 82, 90);
+                bgColors.push('rgba(255, 204, 0, 0.5)', 'rgba(255, 204, 0, 0.5)', 'rgba(255, 204, 0, 0.5)');
+            }
+
+            demandChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Job Posting Mentions (Index)',
+                        data: dataPoints,
+                        backgroundColor: bgColors,
+                        borderWidth: 0,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255,255,255,0.05)' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 4. Doughnut Chart Logic (Chart.js)
+        function renderPredictionChart(industry) {
+            const ctx = document.getElementById('futurePredictionsChart').getContext('2d');
+            
+            if (predictionChartInstance) {
+                predictionChartInstance.destroy();
+            }
+
+            let labels = [];
+            let dataPoints = [];
+
+            if (industry === 'AI & Data') {
+                labels = ['AI Automation Architect', 'LLM Optimizer', 'Data Ethicist', 'Legacy Roles'];
+                dataPoints = [40, 30, 20, 10];
+            } else if (industry === 'Finance') {
+                labels = ['DeFi Analyst', 'Crypto/Blockchain Dev', 'Algorithmic Trader', 'Legacy Banking'];
+                dataPoints = [35, 30, 25, 10];
+            } else if (industry === 'Healthcare') {
+                labels = ['Medical Biotech Eng.', 'TeleHealth Architect', 'AI Diagnostician', 'Legacy Admin'];
+                dataPoints = [35, 25, 25, 15];
+            } else {
+                 labels = ['AI Integrators', 'Automation Engineers', 'Human-in-loop Managers', 'Routine Tasks (Declining)'];
+                 dataPoints = [45, 25, 20, 10];
+            }
+
+            predictionChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: dataPoints,
+                        backgroundColor: [
+                            'rgba(178, 36, 239, 0.8)', // Purple
+                            'rgba(0, 242, 254, 0.8)',  // Cyan
+                            'rgba(255, 204, 0, 0.8)',  // Yellow
+                            'rgba(255, 82, 82, 0.5)'   // Red
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#0b0f19'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '65%',
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                padding: 20,
+                                font: { size: 13 }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+    </script>
+</body>
+</html>

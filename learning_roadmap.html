@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Roadmap | AI Career Guide</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@500;700&display=swap');
+
+        :root {
+            --primary: #00f2fe;
+            --secondary: #4facfe;
+            --accent: #ffcc00;
+            --success: #00e676;
+            --warning: #ff9800;
+            --danger: #ff5252;
+            --purple: #b224ef;
+            --bg: #0b0f19;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 80% 20%, rgba(0, 230, 118, 0.08), transparent 40%),
+                radial-gradient(circle at 20% 80%, rgba(255, 204, 0, 0.08), transparent 40%);
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 40px;
+            background: rgba(11, 15, 25, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--card-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .back-btn {
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        .back-btn:hover {
+            color: var(--primary);
+        }
+
+        nav h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            background: linear-gradient(135deg, #fff, var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Dashboard Container */
+        .dashboard {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(0, 230, 118, 0.3);
+        }
+
+        .header p {
+            font-size: 18px;
+            color: #94a3b8;
+        }
+
+        /* Dashboard Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+        @media (max-width: 900px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+
+        /* Card Stylings */
+        .action-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 30px;
+            backdrop-filter: blur(16px);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, var(--card-color-1, var(--primary)), var(--card-color-2, var(--secondary)));
+            opacity: 0.8;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .card-header h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #fff;
+        }
+
+        /* 5. Overall Progress Bar */
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .progress-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .progress-percent {
+            font-size: 24px;
+            font-family: 'Space Grotesk', sans-serif;
+            color: var(--success);
+            text-shadow: 0 0 10px rgba(0,230,118,0.4);
+        }
+        .progress-rail {
+            width: 100%;
+            height: 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            width: 0%;
+            border-radius: 10px;
+            transition: width 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 15px rgba(0,230,118,0.6);
+        }
+
+        /* 1 & 3 & 5. Timeline / Checkboxes / Links */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            margin-top: 10px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 11px; /* Align with center of custom checkbox */
+            top: 10px;
+            bottom: 20px;
+            width: 2px;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .timeline-step {
+            position: relative;
+            margin-bottom: 40px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        .timeline-step:hover {
+            border-color: rgba(0,242,254,0.3);
+            background: rgba(0,242,254,0.03);
+            transform: translateX(5px);
+        }
+        .timeline-step.completed {
+            opacity: 0.6;
+            border-color: rgba(0,230,118,0.2);
+            background: rgba(0,230,118,0.03);
+        }
+        .timeline-step.completed h4 {
+            text-decoration: line-through;
+            color: #94a3b8;
+        }
+
+        /* Custom Checkbox */
+        .step-checkbox {
+            position: absolute;
+            left: -30px;
+            top: 25px;
+            width: 24px;
+            height: 24px;
+            background: var(--bg);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            z-index: 2;
+        }
+        .step-checkbox:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(0,242,254,0.3);
+        }
+        .step-checkbox.checked {
+            background: var(--success);
+            border-color: var(--success);
+            box-shadow: 0 0 15px rgba(0,230,118,0.5);
+        }
+        .step-checkbox svg {
+            color: #fff;
+            width: 14px;
+            height: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .step-checkbox.checked svg {
+            opacity: 1;
+        }
+
+        .step-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .step-header h4 {
+            font-size: 18px;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+        .step-duration {
+            font-size: 13px;
+            color: var(--accent);
+            background: rgba(255,204,0,0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        .step-desc {
+            color: #94a3b8;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        /* 2. Start Learning Button */
+        .btn-learn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--primary);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .btn-learn:hover {
+            background: rgba(0,242,254,0.1);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        /* 4. Project Suggestions Sidebar */
+        .project-card {
+            background: rgba(0,0,0,0.5);
+            border-left: 4px solid var(--purple);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        .project-card:hover {
+            background: rgba(178, 36, 239, 0.1);
+            transform: translateX(5px);
+        }
+        .project-card h4 {
+            color: #fff;
+            font-size: 15px;
+            margin-bottom: 5px;
+        }
+        .project-card p {
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        /* Generate Button State */
+        .btn-primary-action {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--card-color-1, var(--primary)), var(--card-color-2, var(--secondary)));
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            margin-bottom: 25px;
+        }
+        .btn-primary-action:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 25px rgba(0, 242, 254, 0.4);
+        }
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="back-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            Back to Home
+        </a>
+        <h2>Learning Roadmap</h2>
+        <div style="width: 120px;"></div> 
+    </nav>
+
+    <div class="dashboard">
+        <div class="header">
+            <h1 id="roadmap-heading">Your Custom Pathway</h1>
+            <p>Step-by-step guidance to acquire missing skills and land your dream role.</p>
+        </div>
+
+        <div class="grid">
+            
+            <!-- Main Timeline Column -->
+            <div class="action-card" style="--card-color-1: #00f2fe; --card-color-2: #4facfe;">
+                <div class="card-header">
+                    <h3>🗺️ Dynamic Roadmap</h3>
+                </div>
+
+                <!-- 1. Generate Roadmap Button -->
+                <button class="btn-primary-action" id="gen-btn" onclick="generateRoadmap()">
+                    Generate My Roadmap
+                </button>
+
+                <div id="roadmap-content" style="display: none;">
+                    <!-- 5. Update Progress Bar -->
+                    <div class="progress-header">
+                        <span class="progress-text">Course Completion</span>
+                        <span class="progress-percent" id="progress-text">0%</span>
+                    </div>
+                    <div class="progress-rail">
+                        <div class="progress-fill" id="progress-bar"></div>
+                    </div>
+
+                    <!-- 1, 2, 3: The Timeline -->
+                    <div class="timeline" id="dynamic-timeline">
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar Projects Column -->
+            <div class="action-card" style="--card-color-1: #b224ef; --card-color-2: #7579ff;">
+                <div class="card-header">
+                    <h3>💡 Project Suggestions</h3>
+                </div>
+                <p style="color:#94a3b8; font-size:14px; margin-bottom:20px;">
+                    Theoretical knowledge isn't enough. Build these exact projects to prove your skills to recruiters.
+                </p>
+
+                <div id="project-container">
+                    <div style="text-align:center; padding: 40px 0; color: rgba(255,255,255,0.2);">
+                        Generate Roadmap first to view tailored projects.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let targetCareer = "Software Engineer";
+        let missingSkills = [];
+        let totalSteps = 0;
+        let completedSteps = 0;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // Read data from home page upload
+            const interestsRaw = localStorage.getItem('career_interests') || "Technology";
+            const skillsRaw = localStorage.getItem('career_skills') || "";
+            
+            const existingSkills = skillsRaw.split(',').map(s => s.trim().toLowerCase());
+            
+            // Logic to determine assumed target & missing skills based on interests
+            if (interestsRaw.toLowerCase().includes("data") || interestsRaw.toLowerCase().includes("ai")) {
+                targetCareer = "Data Scientist";
+                missingSkills = ["Python & Pandas", "Machine Learning Algorithms", "Deep Learning Frameworks", "Model Deployment (MLOps)"];
+            } else if (interestsRaw.toLowerCase().includes("web") || interestsRaw.toLowerCase().includes("front")) {
+                targetCareer = "Full Stack Developer";
+                missingSkills = ["Advanced React Patterns", "Node.js & Express", "Database Design (SQL/NoSQL)", "Cloud Deployment"];
+            } else if (interestsRaw.toLowerCase().includes("finance")) {
+                targetCareer = "FinTech Analyst";
+                missingSkills = ["Financial Modeling", "Algorithmic Trading", "Blockchain Basics", "Data Visualization"];
+            } else {
+                targetCareer = `Lead ${interestsRaw} Architect`;
+                missingSkills = ["Core Fundamentals", "Advanced Architecture", "System Design", "Leadership & Agile"];
+            }
+
+            // Simple filter to not include skills they obviously typed in
+            missingSkills = missingSkills.filter(ms => {
+                return !existingSkills.some(es => ms.toLowerCase().includes(es));
+            });
+            if(missingSkills.length < 2) missingSkills.push("Software Testing", "CI/CD Pipelines", "System Architecture");
+
+            document.getElementById('roadmap-heading').innerText = `${targetCareer} Pathway`;
+        });
+
+        // 1. Generate Roadmap
+        function generateRoadmap() {
+            const btn = document.getElementById('gen-btn');
+            const content = document.getElementById('roadmap-content');
+            
+            // UI Button Change
+            btn.innerHTML = "Generating... ⚙️";
+            btn.style.opacity = '0.7';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                btn.style.display = 'none';
+                content.style.display = 'block';
+                populateTimeline();
+                populateProjects();
+            }, 1000);
+        }
+
+        function populateTimeline() {
+            const container = document.getElementById('dynamic-timeline');
+            let html = '';
+            totalSteps = missingSkills.length;
+            completedSteps = 0;
+
+            missingSkills.forEach((skill, index) => {
+                // Mock durations based on index
+                const duration = index === 0 ? "2 Weeks" : (index === 1 ? "3 Weeks" : "4 Weeks");
+                
+                html += `
+                    <div class="timeline-step" id="step-${index}">
+                        <!-- 3. Checkbox to mark complete -->
+                        <div class="step-checkbox" onclick="toggleComplete(${index})">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </div>
+                        
+                        <div class="step-header">
+                            <h4>Phase ${index + 1}: ${skill}</h4>
+                            <span class="step-duration">⏳ ${duration}</span>
+                        </div>
+                        <p class="step-desc">Master the core concepts of ${skill}. Focus on practical implementation and solving common use cases.</p>
+                        
+                        <!-- 2. Start Learning Button -->
+                        <div style="display:flex; gap:10px; margin-top:15px;">
+                            <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(skill + ' tutorial')}" target="_blank" class="btn-learn">
+                                ▶️ Start Learning Video
+                            </a>
+                            <a href="https://github.com/search?q=${encodeURIComponent(skill)}" target="_blank" class="btn-learn" style="color:#e2e8f0;">
+                                📖 Read Docs/Code
+                            </a>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            updateProgressBar();
+        }
+
+        // 4. Project Suggestions
+        function populateProjects() {
+            const container = document.getElementById('project-container');
+            
+            let projects = [];
+            if(targetCareer.includes("Data")) {
+                projects = [
+                    { t: "Housing Price Predictor", d: "Use regression models on Kaggle datasets to predict prices." },
+                    { t: "Customer Churn Dashboard", d: "End-to-end classification model deployed via Streamlit." },
+                    { t: "Custom LLM Fine-Tuning", d: "Fine-tune an open-source model on specialized text." }
+                ];
+            } else if (targetCareer.includes("Developer") || targetCareer.includes("Web")) {
+                projects = [
+                    { t: "E-Commerce Microservices", d: "Build a scalable shop using decoupled Node.js services." },
+                    { t: "Real-time Chat App", d: "Utilize WebSockets and Redis for instant messaging." },
+                    { t: "Portfolio CMS Engine", d: "Create a custom API to manage your own portfolio content." }
+                ];
+            } else {
+                projects = [
+                    { t: `${targetCareer} Automation Script`, d: "Automate a repetitive 10-hour task down to 1 minute." },
+                    { t: "Industry Analysis Report", d: "Scrape and visualize live market data for your sector." },
+                    { t: "Open Source Contribution", d: "Submit 3 merged PRs to major repositories in your field." }
+                ];
+            }
+
+            let html = '';
+            projects.forEach(p => {
+                html += `
+                    <div class="project-card">
+                        <h4>${p.t}</h4>
+                        <p>${p.d}</p>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // 3 & 5. Toggle Complete & Update Progress
+        function toggleComplete(index) {
+            const stepDiv = document.getElementById(`step-${index}`);
+            const checkbox = stepDiv.querySelector('.step-checkbox');
+            
+            const isChecked = checkbox.classList.contains('checked');
+            
+            if(!isChecked) {
+                checkbox.classList.add('checked');
+                stepDiv.classList.add('completed');
+                completedSteps++;
+            } else {
+                checkbox.classList.remove('checked');
+                stepDiv.classList.remove('completed');
+                completedSteps--;
+            }
+
+            updateProgressBar();
+        }
+
+        function updateProgressBar() {
+            const fill = document.getElementById('progress-bar');
+            const text = document.getElementById('progress-text');
+            
+            let percentage = 0;
+            if (totalSteps > 0) {
+                percentage = Math.round((completedSteps / totalSteps) * 100);
+            }
+
+            fill.style.width = `${percentage}%`;
+            
+            // Animate number counter effect
+            let currentDisplay = parseInt(text.innerText) || 0;
+            const targetDisplay = percentage;
+            
+            if(currentDisplay !== targetDisplay) {
+                const step = targetDisplay > currentDisplay ? 1 : -1;
+                const interval = setInterval(() => {
+                    currentDisplay += step;
+                    text.innerText = `${currentDisplay}%`;
+                    if(currentDisplay === targetDisplay) clearInterval(interval);
+                    
+                    // Add glow effect when at 100%
+                    if(currentDisplay === 100) {
+                        text.style.textShadow = "0 0 20px rgba(0,230,118,1)";
+                    } else {
+                        text.style.textShadow = "0 0 10px rgba(0,230,118,0.4)";
+                    }
+                }, 10);
+            }
+        }
+
+    </script>
+</body>
+</html>

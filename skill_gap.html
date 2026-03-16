@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skill Gap Dashboard | AI Career Guide</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@500;700&display=swap');
+
+        :root {
+            --primary: #00f2fe;
+            --secondary: #4facfe;
+            --accent: #ffcc00;
+            --success: #00e676;
+            --warning: #ff9800;
+            --danger: #ff5252;
+            --bg: #0b0f19;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 90%, rgba(255, 82, 82, 0.08), transparent 40%),
+                radial-gradient(circle at 90% 10%, rgba(0, 242, 254, 0.08), transparent 40%);
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            align-items: center;
+            padding: 20px 40px;
+            background: rgba(11, 15, 25, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--card-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .back-btn {
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        .back-btn:hover {
+            color: var(--primary);
+        }
+
+        nav h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            margin-left: auto;
+            margin-right: auto;
+            background: linear-gradient(135deg, #fff, var(--danger));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Dashboard Container */
+        .dashboard {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255, 82, 82, 0.3);
+        }
+
+        .header p {
+            font-size: 18px;
+            color: #94a3b8;
+        }
+
+        /* Dashboard Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        /* Card Stylings */
+        .action-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 30px;
+            backdrop-filter: blur(16px);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, var(--card-color-1, var(--primary)), var(--card-color-2, var(--secondary)));
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+
+        .action-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .action-card:hover::before {
+            opacity: 1;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-header h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #fff;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 16px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-action:hover {
+            background: rgba(255,255,255,0.1);
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary-action {
+            background: linear-gradient(135deg, var(--card-color-1, var(--primary)), var(--card-color-2, var(--secondary)));
+            color: #000;
+            border: none;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn-primary-action:hover {
+            background: linear-gradient(135deg, var(--card-color-2, var(--secondary)), var(--card-color-1, var(--primary)));
+            box-shadow: 0 10px 25px rgba(var(--card-color-1-rgb, 255, 82, 82), 0.4);
+            color: #000;
+        }
+
+        /* Result Panel */
+        .result-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), margin 0.3s ease, opacity 0.4s ease;
+            opacity: 0;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            margin-top: 0;
+        }
+
+        .result-panel.active {
+            max-height: 800px;
+            opacity: 1;
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* 1. Detect Gaps */
+        .detected-gaps-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .gap-badge {
+            background: rgba(255, 82, 82, 0.1);
+            border: 1px solid rgba(255, 82, 82, 0.3);
+            color: var(--danger);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* 2. Priority Skills */
+        .priority-item {
+            background: linear-gradient(90deg, rgba(255,204,0,0.1), transparent);
+            border-left: 4px solid var(--accent);
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        .priority-item h4 {
+            color: #fff;
+            margin-bottom: 4px;
+            font-size: 16px;
+        }
+        .priority-item p {
+            color: #cbd5e1;
+            font-size: 13px;
+        }
+
+        /* 3. Learning Plan Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 20px;
+            margin-top: 15px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 5px;
+            bottom: 5px;
+            width: 2px;
+            background: rgba(0, 242, 254, 0.3);
+        }
+        .timeline-step {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .timeline-step::before {
+            content: '';
+            position: absolute;
+            left: -25px;
+            top: 4px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+        }
+        .timeline-step h4 { color: #fff; font-size: 15px; margin-bottom: 3px;}
+        .timeline-step p { color: #94a3b8; font-size: 13px;}
+
+        /* 4. Compare Pros */
+        .pro-compare-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .pro-label { width: 100px; font-size: 13px; color: #fff; }
+        .pro-bars { flex: 1; display:flex; flex-direction:column; gap:5px; }
+        .pro-bar-bg { height: 6px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow:hidden;}
+        .pro-fill { height: 100%; border-radius: 4px; transition: width 1s ease-out; }
+
+        /* 5. Track Improvement Chart Mockup */
+        .chart-mockup {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 180px;
+            padding-top: 20px;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            border-left: 2px solid rgba(255,255,255,0.2);
+            padding-left: 10px;
+            margin: 20px 0;
+        }
+        .chart-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 40px;
+            height: 100%;
+            justify-content: flex-end;
+        }
+        .chart-bar-bg {
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.05);
+            border-radius: 4px 4px 0 0;
+            display: flex;
+            align-items: flex-end;
+            position: relative;
+        }
+        .chart-bar-fill {
+            width: 100%;
+            background: linear-gradient(to top, var(--success), #69f0ae);
+            border-radius: 4px 4px 0 0;
+            transition: height 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+            height: 0px; /* Initially 0 */
+            box-shadow: 0 0 15px rgba(0, 230, 118, 0.5);
+            position: relative;
+        }
+        .chart-bar-fill::after {
+            content: attr(data-height);
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            font-size: 12px;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.5s 1s; /* fade in after bar grows */
+        }
+        .result-panel.active .chart-bar-fill::after {
+            opacity: 1;
+        }
+        .chart-label { color: #94a3b8; font-size: 13px; margin-top: 10px;}
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="back-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            Back to Home
+        </a>
+        <h2>Skill Gap Analysis</h2>
+        <div style="width: 120px;"></div> 
+    </nav>
+
+    <div class="dashboard">
+        <div class="header">
+            <h1 id="target-career-heading">Target: Your Career</h1>
+            <p>Identify missing skills, prioritize your learning, and track your path to mastery.</p>
+        </div>
+
+        <div class="grid">
+            
+            <!-- 1. Detect Skill Gaps -->
+            <div class="action-card" style="--card-color-1: #ff5252; --card-color-2: #f48fb1; --card-color-1-rgb: 255,82,82;">
+                <div class="card-header">
+                    <h3>🧠 Detect Skill Gaps</h3>
+                </div>
+                <button class="btn-action btn-primary-action" onclick="detectGaps()">
+                    Run Gap Analysis
+                </button>
+                <div id="panel-gaps" class="result-panel">
+                    <p style="margin-bottom: 10px; color:#cbd5e1; font-size: 14px;">Identified Missing Technologies:</p>
+                    <div class="detected-gaps-grid" id="dynamic-gaps">
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Priority Skills -->
+            <div class="action-card" style="--card-color-1: #ffcc00; --card-color-2: #ff9900;">
+                <div class="card-header">
+                    <h3>⚡ Show Priority Skills</h3>
+                </div>
+                <button class="btn-action" onclick="togglePanel('panel-priority')">
+                    View Critical Gaps
+                </button>
+                <div id="panel-priority" class="result-panel" id="dynamic-priority">
+                     <!-- Injected via JS -->
+                </div>
+            </div>
+
+            <!-- 3. Learning Plan -->
+            <div class="action-card" style="--card-color-1: #00f2fe; --card-color-2: #4facfe;">
+                <div class="card-header">
+                    <h3>📚 Generate Learning Plan</h3>
+                </div>
+                <button class="btn-action" onclick="togglePanel('panel-plan')">
+                    Create Roadmap
+                </button>
+                <div id="panel-plan" class="result-panel">
+                    <p style="color:#94a3b8; font-size: 14px;">Structured approach to close the gap:</p>
+                    <div class="timeline" id="dynamic-timeline">
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Compare Pros -->
+            <div class="action-card" style="--card-color-1: #b224ef; --card-color-2: #7579ff;">
+                <div class="card-header">
+                    <h3>🏆 Compare With Pros</h3>
+                </div>
+                <button class="btn-action" onclick="showProCompare()">
+                    View Industry Standards
+                </button>
+                <div id="panel-pros" class="result-panel">
+                    <div style="display:flex; justify-content:flex-end; gap:15px; font-size:11px; margin-bottom:15px;">
+                        <span style="color:var(--primary)">■ You</span>
+                        <span style="color:var(--accent)">■ Top 10% Experts</span>
+                    </div>
+                    <div id="dynamic-pro-compare">
+                         <!-- Injected via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. Track Improvement -->
+            <div class="action-card" style="--card-color-1: #00e676; --card-color-2: #1de9b6; grid-column: 1 / -1; max-width: 600px; margin: 0 auto; width: 100%;">
+                <div class="card-header">
+                    <h3>📊 Track Skill Improvement</h3>
+                </div>
+                <button class="btn-action btn-primary-action" style="background:var(--card-color-1); color:#000;" onclick="showChart()">
+                    Projected Growth
+                </button>
+                <div id="panel-chart" class="result-panel">
+                    <p style="margin-bottom: 20px; color:#cbd5e1; font-size: 14px; text-align: center;">Estimated Readiness Score over 4 Months</p>
+                    
+                    <div class="chart-mockup">
+                        <div class="chart-col">
+                            <div class="chart-bar-bg"><div class="chart-bar-fill" data-height="30%"></div></div>
+                            <span class="chart-label">Month 1</span>
+                        </div>
+                        <div class="chart-col">
+                            <div class="chart-bar-bg"><div class="chart-bar-fill" data-height="45%"></div></div>
+                            <span class="chart-label">Month 2</span>
+                        </div>
+                        <div class="chart-col">
+                            <div class="chart-bar-bg"><div class="chart-bar-fill" data-height="70%"></div></div>
+                            <span class="chart-label">Month 3</span>
+                        </div>
+                        <div class="chart-col">
+                            <div class="chart-bar-bg"><div class="chart-bar-fill" data-height="95%"></div></div>
+                            <span class="chart-label">Month 4</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Script Handling Dynamic Data -->
+    <script>
+        let targetCareer = "Software Engineer";
+        let missingSkills = [];
+        let existingSkills = [];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // Read data from home page upload
+            const interestsRaw = localStorage.getItem('career_interests') || "Technology";
+            const skillsRaw = localStorage.getItem('career_skills') || "HTML, CSS";
+            
+            existingSkills = skillsRaw.split(',').map(s => s.trim().toLowerCase());
+            
+            // Generate dynamic target career
+            if (interestsRaw.toLowerCase().includes("data") || interestsRaw.toLowerCase().includes("ai")) {
+                targetCareer = "Data Scientist";
+                missingSkills = ["Deep Learning", "Apache Spark", "Advanced Statistics"];
+            } else if (interestsRaw.toLowerCase().includes("web") || interestsRaw.toLowerCase().includes("front")) {
+                targetCareer = "Senior UI Engineer";
+                missingSkills = ["WebAssembly", "Micro-frontends", "Three.js (3D)"];
+            } else {
+                targetCareer = `Senior ${interestsRaw} Specialist`;
+                missingSkills = ["System Architecture", "Cloud Deployment (AWS/Azure)", "Agile Leadership"];
+            }
+
+            // Clean up missing skills if they accidentally uploaded them already
+            missingSkills = missingSkills.filter(ms => !existingSkills.includes(ms.toLowerCase()));
+            if(missingSkills.length === 0) missingSkills = ["Advanced Design Patterns", "Performance Optimization"];
+
+            // Update UI
+            document.getElementById('target-career-heading').innerText = `Target: ${targetCareer}`;
+
+            populatePriority();
+            populateTimeline();
+            populateProCompare();
+        });
+
+        // Utility
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            panel.classList.toggle('active');
+        }
+
+        // 1. Detect Gaps
+        function detectGaps() {
+            const container = document.getElementById('dynamic-gaps');
+            let html = '';
+            missingSkills.forEach(skill => {
+                html += `<span class="gap-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> ${skill}</span>`;
+            });
+            container.innerHTML = html;
+
+            const btn = document.querySelector('#panel-gaps').previousElementSibling;
+            togglePanel('panel-gaps');
+            btn.innerHTML = "Analysis Complete ✓";
+            setTimeout(()=>{ btn.innerHTML = "Run Gap Analysis"; }, 2000);
+        }
+
+        // 2. Priority
+        function populatePriority() {
+            const container = document.getElementById('panel-priority');
+            // Take top 2 missing skills
+            const p1 = missingSkills[0] || "Core Fundamentals";
+            const p2 = missingSkills[1] || "Advanced Methodologies";
+
+            container.innerHTML = `
+                <p style="margin-bottom: 15px; color:#94a3b8; font-size: 14px;">Tackle these first to maximize impact:</p>
+                <div class="priority-item">
+                    <h4>1. ${p1}</h4>
+                    <p>High market demand. Blocking 40% of standard ${targetCareer} roles.</p>
+                </div>
+                <div class="priority-item" style="border-left-color: var(--warning);">
+                    <h4>2. ${p2}</h4>
+                    <p>Required for technical interviews in top-tier companies.</p>
+                </div>
+            `;
+        }
+
+        // 3. Timeline
+        function populateTimeline() {
+            const container = document.getElementById('dynamic-timeline');
+            const p1 = missingSkills[0] || "Skill A";
+            const p2 = missingSkills[1] || "Skill B";
+
+            container.innerHTML = `
+                <div class="timeline-step">
+                    <h4>Weeks 1-3: ${p1} Basics</h4>
+                    <p>Complete foundation courses and build one minor project.</p>
+                </div>
+                <div class="timeline-step">
+                    <h4>Weeks 4-6: ${p1} Advanced & ${p2} Intro</h4>
+                    <p>Deploy project to cloud environment to begin testing ${p2}.</p>
+                </div>
+                <div class="timeline-step">
+                    <h4>Weeks 7-8: Portfolio Integration</h4>
+                    <p>Update resume and dashboard to reflect newly acquired capabilities.</p>
+                </div>
+            `;
+        }
+
+        // 4. Pro Compare
+        function populateProCompare() {
+            const container = document.getElementById('dynamic-pro-compare');
+            // Mocking current upload skill vs missing skill necessity
+            const baseSkill = existingSkills[0] ? (existingSkills[0].charAt(0).toUpperCase() + existingSkills[0].slice(1)) : "Domain Knowledge";
+            const gapSkill = missingSkills[0] || "Target Skill";
+
+            const myBase = Math.floor(Math.random() * 20) + 60; // 60-80
+            const myGap = Math.floor(Math.random() * 20) + 10;  // 10-30
+
+            container.innerHTML = `
+                <div class="pro-compare-row">
+                    <div class="pro-label">${baseSkill}</div>
+                    <div class="pro-bars">
+                        <div class="pro-bar-bg"><div class="pro-fill" style="background:var(--primary)" data-width="${myBase}%"></div></div>
+                        <div class="pro-bar-bg"><div class="pro-fill" style="background:var(--accent)" data-width="95%"></div></div>
+                    </div>
+                </div>
+                <div class="pro-compare-row">
+                    <div class="pro-label">${gapSkill}</div>
+                    <div class="pro-bars">
+                        <div class="pro-bar-bg"><div class="pro-fill" style="background:var(--primary)" data-width="${myGap}%"></div></div>
+                        <div class="pro-bar-bg"><div class="pro-fill" style="background:var(--accent)" data-width="90%"></div></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showProCompare() {
+            const panel = document.getElementById('panel-pros');
+            panel.classList.toggle('active');
+            
+            if(panel.classList.contains('active')) {
+                setTimeout(() => {
+                    panel.querySelectorAll('.pro-fill').forEach(bar => {
+                        bar.style.width = bar.getAttribute('data-width');
+                    });
+                }, 50);
+            } else {
+                 panel.querySelectorAll('.pro-fill').forEach(bar => { bar.style.width = '0'; });
+            }
+        }
+
+        // 5. Track Chart
+        function showChart() {
+            const panel = document.getElementById('panel-chart');
+            panel.classList.toggle('active');
+            
+            if(panel.classList.contains('active')) {
+                // Ensure proper display before animating
+                setTimeout(() => {
+                    panel.querySelectorAll('.chart-bar-fill').forEach(bar => {
+                        const targetHeight = bar.getAttribute('data-height');
+                        bar.style.height = targetHeight;
+                    });
+                }, 100);
+            } else {
+                 panel.querySelectorAll('.chart-bar-fill').forEach(bar => { 
+                     bar.style.height = '0px'; 
+                 });
+            }
+        }
+
+    </script>
+</body>
+</html>

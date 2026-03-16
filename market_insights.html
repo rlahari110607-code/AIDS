@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Insights - Deep Dive</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@500;700&display=swap');
+
+        :root {
+            --primary: #00f2fe;
+            --secondary: #4facfe;
+            --accent: #ffcc00;
+            --bg: #0b0f19;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            min-height: 100vh;
+            scroll-behavior: smooth;
+        }
+
+        /* Dynamic Spotlight Background */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle 600px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(79, 172, 254, 0.15), transparent 80%);
+            pointer-events: none;
+            z-index: -1;
+            transition: background 0.2s ease;
+        }
+
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -2;
+            animation: float 10s infinite ease-in-out alternate;
+        }
+
+        .orb-1 {
+            top: -10%;
+            left: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: rgba(0, 242, 254, 0.15);
+        }
+
+        .orb-2 {
+            bottom: -10%;
+            right: -10%;
+            width: 40vw;
+            height: 40vw;
+            background: rgba(255, 204, 0, 0.1);
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(30px, 50px); }
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 60px;
+            background: rgba(11, 15, 25, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid var(--card-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 24px;
+            background: linear-gradient(135deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+            cursor: pointer;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(-5px);
+            box-shadow: 0 5px 15px rgba(0, 242, 254, 0.2);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        .hero-title {
+            text-align: center;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 48px;
+            margin-bottom: 60px;
+            background: linear-gradient(to right, #fff, var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 30px rgba(0, 242, 254, 0.2);
+        }
+
+        /* Sections */
+        .insight-section {
+            margin-bottom: 80px;
+            padding-top: 100px; /* For smooth scrolling offset */
+            margin-top: -100px;
+            animation: fadeIn 1s ease-out both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .glass-panel {
+            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(0,0,0,0.2));
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 50px;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-panel::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0,242,254,0.05) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+        }
+
+        .glass-panel:hover::before {
+            opacity: 1;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 32px;
+            color: #fff;
+        }
+
+        .section-header img {
+            width: 36px;
+            height: 36px;
+            filter: drop-shadow(0 0 10px var(--primary));
+        }
+
+        .desc {
+            color: #94a3b8;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            max-width: 800px;
+        }
+
+        /* Skills Progress Bars */
+        .skills-container {
+            display: grid;
+            gap: 25px;
+        }
+
+        .skill-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 16px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .skill-item:hover {
+            transform: translateX(10px);
+            box-shadow: -5px 10px 20px rgba(0, 0, 0, 0.2);
+            border-color: rgba(0, 242, 254, 0.3);
+        }
+
+        .skill-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .skill-info .name {
+            color: #fff;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .skill-info .usage {
+            color: var(--accent);
+            font-size: 14px;
+            background: rgba(255, 204, 0, 0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            width: 0;
+            transition: width 1.5s cubic-bezier(0.1, 0.8, 0.2, 1);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.5);
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Interactive Career Cards */
+        .careers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .career-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            cursor: crosshair;
+        }
+
+        .career-card:hover {
+            transform: translateY(-10px) rotateX(5deg) rotateY(-5deg);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--accent);
+            box-shadow: 10px 20px 40px rgba(0, 0, 0, 0.4),
+                        0 0 20px rgba(255, 204, 0, 0.15);
+        }
+
+        .career-card h3 {
+            font-size: 24px;
+            color: #fff;
+            margin-bottom: 15px;
+            font-family: 'Space Grotesk', sans-serif;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .career-card p {
+            color: #cbd5e1;
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .career-stats {
+            display: flex;
+            gap: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+            margin-top: auto;
+        }
+
+        .stat {
+            flex: 1;
+        }
+
+        .stat-label {
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #64748b;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .career-card:nth-child(2) .stat-value {
+            color: var(--accent);
+        }
+
+        .career-card:nth-child(3) .stat-value {
+            color: #a855f7;
+        }
+
+        /* Cool Floating Badges */
+        .badge {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            background: linear-gradient(135deg, #ff007a, #7a00ff);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(255, 0, 122, 0.4);
+            animation: pulse-badge 2s infinite;
+        }
+
+        @keyframes pulse-badge {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @media (max-width: 768px) {
+            nav { padding: 15px 20px; }
+            .glass-panel { padding: 30px 20px; }
+            .hero-title { font-size: 36px; }
+            .section-header h2 { font-size: 26px; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <nav>
+        <h2 onclick="window.location.href='index.html'">AI Career Guide</h2>
+        <a href="index.html" class="back-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            Back to Home
+        </a>
+    </nav>
+
+    <div class="container">
+        <h1 class="hero-title">Deep Dive: Market Insights</h1>
+
+        <!-- Top Skills Section -->
+        <section id="skills" class="insight-section">
+            <div class="glass-panel">
+                <div class="section-header">
+                    <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.321.0/icons/zap.svg" alt="Zap">
+                    <h2>Top Skills in Demand</h2>
+                </div>
+                <p class="desc">The digital economy is aggressively expanding, and so is the demand for specialized technical skills. Mastering these tools ensures you remain competitive, adaptable, and highly sought-after by top-tier tech firms globally.</p>
+
+                <div class="skills-container">
+                    
+                    <div class="skill-item">
+                        <div class="skill-info">
+                            <span class="name"><img src="https://cdn.jsdelivr.net/npm/lucide-static@0.321.0/icons/code-2.svg" width="20" alt="Code"> Python</span>
+                            <span class="usage">AI, Data, Web</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill" data-width="95%" style="background: linear-gradient(90deg, #3776AB, #00f2fe);"></div>
+                        </div>
+                    </div>
+
+                    <div class="skill-item">
+                        <div class="skill-info">
+                            <span class="name"><img src="https://cdn.jsdelivr.net/npm/lucide-static@0.321.0/icons/database.svg" width="20" alt="DB"> SQL</span>
+                            <span class="usage">Data Management</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill" data-width="88%" style="background: linear-gradient(90deg, #f29111, #ffcc00);"></div>
+                        </div>
+                    </div>
+
+                    <div class="skill-item">
+                        <div class="skill-info">
+                            <span class="name"><img src="https://cdn.jsdelivr.net/npm/lucide-static@0.321.0/icons/pie-chart.svg" width="20" alt="Chart"> Power BI / Tableau</span>
+                            <span class="usage">Data Visualization</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill" data-width="82%" style="background: linear-gradient(90deg, #F2C811, #1192F2);"></div>
+                        </div>
+                    </div>
+
+                    <div class="skill-item">
+                        <div class="skill-info">
+                            <span class="name"><img src="https://cdn.jsdelivr.net/npm/lucide-static@0.321.0/icons/brain-circuit.svg" width="20" alt="Brain"> Machine Learning</span>
+                            <span class="usage">Predictive Modeling</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill" data-width="91%" style="background: linear-gradient(90deg, #a855f7, #ec4899);"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Trending Careers Section -->
+        <section id="careers" class="insight-section">
+            <div class="glass-panel">
+                <div class="section-header">
+                    <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.321.0/icons/briefcase.svg" alt="Briefcase">
+                    <h2>Trending Careers</h2>
+                </div>
+                <p class="desc">Explore the roles leading the technological revolution. These positions aren’t just jobs—they are high-impact careers shaping how businesses operate and how society interacts with technology.</p>
+
+                <div class="careers-grid">
+                    
+                    <div class="career-card">
+                        <h3>Data Analyst</h3>
+                        <p>Transforms raw data into meaningful insights. Highly crucial for business intelligence and strategic decision-making in large organizations.</p>
+                        <div class="career-stats">
+                            <div class="stat">
+                                <span class="stat-label">Growth Rate</span>
+                                <span class="stat-value">+25% YOY</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Avg Salary</span>
+                                <span class="stat-value">$85k - $110k</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="career-card" style="border-color: rgba(255, 204, 0, 0.3);">
+                        <div class="badge">HOT ROLE</div>
+                        <h3>AI Engineer</h3>
+                        <p>Designs and deploys scalable artificial intelligence models. Extremely high demand as companies rush to integrate Generative AI solutions.</p>
+                        <div class="career-stats">
+                            <div class="stat">
+                                <span class="stat-label">Growth Rate</span>
+                                <span class="stat-value">+40% YOY</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Avg Salary</span>
+                                <span class="stat-value">$130k - $180k</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="career-card">
+                        <h3>Data Scientist</h3>
+                        <p>Architects complex algorithms and predictive models. Blends advanced mathematics, statistics, and programming to solve unprecedented problems.</p>
+                        <div class="career-stats">
+                            <div class="stat">
+                                <span class="stat-label">Growth Rate</span>
+                                <span class="stat-value">+35% YOY</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Avg Salary</span>
+                                <span class="stat-value">$120k - $160k</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Script for interactive elements -->
+    <script>
+        // Spotlight Effect
+        document.addEventListener("mousemove", (e) => {
+            document.documentElement.style.setProperty('--mouse-x', e.clientX + 'px');
+            document.documentElement.style.setProperty('--mouse-y', e.clientY + 'px');
+        });
+
+        // Animate skills progress on scroll
+        const observerOptions = {
+            threshold: 0.2
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const fills = entry.target.querySelectorAll('.progress-fill');
+                    fills.forEach(fill => {
+                        fill.style.width = fill.getAttribute('data-width');
+                    });
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        const skillsSection = document.getElementById('skills');
+        if(skillsSection) observer.observe(skillsSection);
+
+        // Pre-fill if there is a hash
+        window.onload = () => {
+            setTimeout(() => {
+                const fills = document.querySelectorAll('.progress-fill');
+                fills.forEach(fill => {
+                    fill.style.width = fill.getAttribute('data-width');
+                });
+            }, 500);
+        };
+    </script>
+</body>
+</html>

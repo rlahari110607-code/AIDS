@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Career Guidance - Premium</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@500;700&display=swap');
+
+        :root {
+            --primary: #00f2fe;
+            --secondary: #4facfe;
+            --accent: #ffcc00;
+            --bg: #0b0f19;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Dynamic Spotlight Background */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle 600px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(79, 172, 254, 0.15), transparent 80%);
+            pointer-events: none;
+            z-index: -1;
+            transition: background 0.2s ease;
+        }
+
+        /* Decorative Orbs */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -2;
+            animation: float 10s infinite ease-in-out alternate;
+        }
+
+        .orb-1 {
+            top: -10%;
+            left: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: rgba(0, 242, 254, 0.15);
+        }
+
+        .orb-2 {
+            bottom: -10%;
+            right: -10%;
+            width: 40vw;
+            height: 40vw;
+            background: rgba(255, 204, 0, 0.1);
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            100% {
+                transform: translate(30px, 50px);
+            }
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 60px;
+            background: rgba(11, 15, 25, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid var(--card-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 24px;
+            background: linear-gradient(135deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        nav ul li {
+            font-size: 15px;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        nav ul li::after {
+            content: '';
+            position: absolute;
+            width: 0%;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        nav ul li:hover::after {
+            width: 100%;
+        }
+
+        nav ul li:hover {
+            color: #fff;
+            text-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 120px 20px 80px;
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            border-radius: 50px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            color: var(--secondary);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 0 20px rgba(79, 172, 254, 0.1);
+        }
+
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 64px;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            background: linear-gradient(to right, #fff, var(--secondary), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 30px rgba(0, 242, 254, 0.2);
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: #94a3b8;
+            max-width: 600px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'Space Grotesk', sans-serif;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn img {
+            width: 20px;
+            height: 20px;
+            filter: brightness(0) invert(1);
+            transition: transform 0.3s ease;
+        }
+
+        .primary {
+            background: linear-gradient(135deg, #00f2fe, #4facfe);
+            color: #000;
+            box-shadow: 0 10px 25px rgba(0, 242, 254, 0.4);
+        }
+
+        .primary img {
+            filter: brightness(0);
+        }
+
+        .primary:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(0, 242, 254, 0.6);
+        }
+
+        .primary:hover img {
+            transform: translateX(3px) translateY(-3px);
+        }
+
+        .secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .secondary:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #fff;
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Features Section */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            padding: 40px 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: left;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-15px);
+            border-color: rgba(0, 242, 254, 0.4);
+            box-shadow: 0 20px 40px rgba(0, 242, 254, 0.15);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card-icon {
+            background: rgba(0, 242, 254, 0.1);
+            padding: 16px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            transition: transform 0.4s ease;
+        }
+
+        .card:hover .card-icon {
+            transform: scale(1.1) rotate(5deg);
+            background: rgba(0, 242, 254, 0.2);
+        }
+
+        .card-icon img {
+            width: 32px;
+            height: 32px;
+            filter: brightness(0) invert(1) drop-shadow(0 0 5px rgba(0, 242, 254, 0.5));
+        }
+
+        .card h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 22px;
+            margin-bottom: 12px;
+            color: #fff;
+        }
+
+        .card p {
+            font-size: 15px;
+            color: #94a3b8;
+            line-height: 1.5;
+        }
+
+        /* Insights Section */
+        .insights {
+            padding: 80px 20px;
+            text-align: center;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .insights h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 36px;
+            margin-bottom: 40px;
+            text-shadow: 0 0 20px rgba(255, 204, 0, 0.2);
+        }
+
+        .insights-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .chart-box {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
+            border: 1px solid rgba(255, 204, 0, 0.2);
+            color: #fff;
+            width: 350px;
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .chart-box:hover {
+            transform: scale(1.03);
+            border-color: var(--accent);
+        }
+
+        .chart-box h4 {
+            color: var(--accent);
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .chart-box h4 img {
+            width: 20px;
+            filter: drop-shadow(0 0 5px var(--accent));
+        }
+
+        .chart-box p {
+            font-size: 16px;
+            letter-spacing: 1px;
+            color: #cbd5e1;
+        }
+
+        /* Chatbot */
+        .chatbot {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            background: linear-gradient(135deg, var(--accent), #ff9900);
+            color: #000;
+            padding: 16px 28px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-family: 'Space Grotesk', sans-serif;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 25px rgba(255, 204, 0, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            animation: pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+        }
+
+        .chatbot img {
+            width: 24px;
+            height: 24px;
+            filter: brightness(0);
+        }
+
+        .chatbot:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(255, 204, 0, 0.5);
+            animation: none;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 10px 25px rgba(255, 204, 0, 0.3);
+            }
+
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 15px 35px rgba(255, 204, 0, 0.5);
+            }
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border-top: 1px solid var(--card-border);
+            margin-top: 60px;
+            color: #64748b;
+        }
+
+        footer p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        footer p:first-child {
+            color: #fff;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                gap: 20px;
+                padding: 20px;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+
+            .hero h1 {
+                font-size: 42px;
+            }
+
+            .hero {
+                padding: 80px 20px 40px;
+            }
+
+            .features {
+                padding: 20px;
+            }
+
+            .chatbot {
+                bottom: 20px;
+                right: 20px;
+                padding: 12px 20px;
+            }
+        }
+
+        /* Form Styles */
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto 40px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(16px);
+            text-align: left;
+            display: none; /* Hidden by default */
+            animation: slideDown 0.4s ease-out;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-container.active {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #cbd5e1;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            font-size: 15px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+        }
+
+        /* Hidden File Input */
+        #resumeInput {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Dynamic Spotlight -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <h2>AI Career Guide</h2>
+        <ul>
+            <li>Skill Analysis</li>
+            <li>Career Recommendation</li>
+            <li>Skill Gap</li>
+            <li>Market Trends</li>
+            <li>Learning Roadmap</li>
+            <li>Resume Analysis</li>
+            <li>Final Report</li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-badge">✨ Next-Generation AI Engine</div>
+        <h1>AI-Powered<br>Career Guidance</h1>
+        <p>Discover the best career path using AI-driven skill analysis, real-time market trends, and personalized
+            learning recommendations tailored just for you.</p>
+
+        <div class="button-group" id="initialButtons">
+            <button class="btn primary" onclick="showAnalysisForm()">
+                Start Career Analysis
+                <!-- SVG Icon: Rocket -->
+                <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.321.0/icons/rocket.svg" alt="Rocket">
+            </button>
+            <button class="btn secondary" onclick="triggerFileUpload()">
+                <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.321.0/icons/file-up.svg" alt="Upload">
+                Upload Resume
+            </button>
+            <input type="file" id="resumeInput" accept=".pdf,.doc,.docx" onchange="handleFileUpload(event)">
+        </div>
+
+        <!-- Initial hidden form for Skill Analysis -->
+        <div class="form-container" id="analysisForm">
+            <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 24px; margin-bottom: 20px; color: #fff; text-align: center;">Enter Your Details</h3>
+            
+            <div class="form-group">
+                <label>Areas of Interest</label>
+                <input type="text" id="interestInput" placeholder="e.g., Data Science, Web Development, AI">
+            </div>
+            
+            <div class="form-group">
+                <label>Current Skills (Comma Separated)</label>
+                <input type="text" id="skillsInput" placeholder="e.g., Python, SQL, React, Node.js">
+            </div>
+            
+            <div class="form-group">
+                <label>Self-Assessed Skill Level (0-100%)</label>
+                <input type="text" id="skillLevelInput" placeholder="e.g., Python: 80%, SQL: 70%">
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn primary" style="width: 100%; justify-content: center;" onclick="submitAnalysis(this)">
+                    Upload
+                    <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.321.0/icons/upload-cloud.svg" alt="Upload">
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features">
+        <div class="card" onclick="window.location.href='skill_analysis.html'" style="cursor: pointer;">
+            <div class="card-icon">
+                <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.321.0/icons/target.svg" alt="Skill">
+            </div>
+            <h3>Skill Analysis</h3>
+            <p>Deeply understand your strengths, track progressions, and benchmark your current skill levels against
+                industry standards.</p>
+        </div>
+
+        <div class="card" onclick="window.location.href='career_recommendation.html'" style="cursor: pointer;">
+            <div class="card-icon">
+                <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.321.0/icons/compass.svg" alt="Career">
+            </div>
+            <h3>Career Recommendation</h3>
+            <p>Our intelligent AI suggests the optimal career roles perfectly aligned with your unique profile and
+                aspirations.</p>
+        </div>
+
+        <div class="card" onclick="window.location.href='skill_gap.html'" style="cursor: pointer;">
+            <div class="card-icon">
+                <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.321.0/icons/bar-chart-2.svg" alt="Gap">
+            </div>
+            <h3>Skill Gap Detection</h3>
+            <p>Identify critical missing skills required for your dream career and get actionable steps to bridge the
+                gap.</p>
+        </div>
+
+        <div class="card" onclick="window.location.href='market_trends.html'" style="cursor: pointer;">
+            <div class="card-icon">
+                <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.321.0/icons/trending-up.svg" alt="Trend">
+            </div>
+            <h3>Market Trends</h3>
+            <p>Stay ahead of the curve with real-time insights into trending jobs, in-demand technologies, and future
+                forecasts.</p>
+        </div>
+
+        <div class="card" onclick="window.location.href='learning_roadmap.html'" style="cursor: pointer;">
+            <div class="card-icon">
+                <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.321.0/icons/book-open.svg" alt="Learn">
+            </div>
+            <h3>Learning Roadmap</h3>
+            <p>Get a personalized, step-by-step learning pathway with curated resources to help you master new skills
+                efficiently.</p>
+        </div>
+        <div class="card" onclick="window.location.href='resume_analysis.html'" style="cursor: pointer;">
+            <div class="card-icon">
+                <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.321.0/icons/file-text.svg" alt="Resume">
+            </div>
+            <h3>Resume Analysis</h3>
+            <p>Upload your resume to receive AI-driven feedback, optimize for ATS, and uncover hidden opportunities.
+            </p>
+        </div>
+
+        <div class="card" onclick="window.location.href='final_report.html'" style="cursor: pointer;">
+            <div class="card-icon">
+                <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.321.0/icons/clipboard-check.svg" alt="Report">
+            </div>
+            <h3>Final Report</h3>
+            <p>Compile all your insights into a comprehensive, downloadable career action plan tailored specifically to
+                you.</p>
+        </div>
+    </section>
+
+    <!-- Insights -->
+    <section class="insights">
+        <h2>Quick Market Insights</h2>
+        <div class="insights-grid">
+            <div class="chart-box" onclick="window.location.href='market_insights.html#skills'" style="cursor: pointer;">
+                <h4>
+                    <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.321.0/icons/zap.svg" alt="Zap">
+                    Top Skills in Demand
+                </h4>
+                <p>Python • SQL • Power BI • Machine Learning</p>
+            </div>
+
+            <div class="chart-box" onclick="window.location.href='market_insights.html#careers'" style="cursor: pointer;">
+                <h4>
+                    <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.321.0/icons/briefcase.svg" alt="Briefcase">
+                    Trending Careers
+                </h4>
+                <p>Data Analyst • AI Engineer • Data Scientist</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Chatbot -->
+    <div class="chatbot" onclick="chatBot()">
+        <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.321.0/icons/bot.svg" alt="Bot">
+        Ask AI Assistant
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>Created by Laharika and Haritha</p>
+        <p>B.Tech Artificial Intelligence & Data Science</p>
+        <p>Annamacharya Institute of Technology and Sciences</p>
+    </footer>
+
+    <script>
+        // Spotlight Effect corresponding to mouse movement
+        document.addEventListener("mousemove", (e) => {
+            document.documentElement.style.setProperty('--mouse-x', e.clientX + 'px');
+            document.documentElement.style.setProperty('--mouse-y', e.clientY + 'px');
+        });
+
+        function showAnalysisForm() {
+            document.getElementById('initialButtons').style.display = 'none';
+            document.getElementById('analysisForm').classList.add('active');
+        }
+
+        function submitAnalysis(btn) {
+            // Collect the data from the input fields
+            const interests = document.getElementById('interestInput').value;
+            const skills = document.getElementById('skillsInput').value;
+            const skillLevel = document.getElementById('skillLevelInput').value;
+
+            // Optional Data Validation
+            if (!interests || !skills || !skillLevel) {
+                alert("Please fill out all fields before uploading!");
+                return;
+            }
+
+            // Store the collected data in localStorage
+            localStorage.setItem('career_interests', interests);
+            localStorage.setItem('career_skills', skills);
+            localStorage.setItem('career_skillLevel', skillLevel);
+
+            // Notify user and redirect
+            btn.innerHTML = "Uploaded ✓";
+            btn.style.background = "#00e676";
+            btn.style.color = "#000";
+            
+            setTimeout(() => {
+                window.location.href = "skill_analysis.html";
+            }, 800);
+        }
+
+        function triggerFileUpload() {
+            document.getElementById('resumeInput').click();
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                alert(`Resume "${file.name}" uploaded successfully! Redirecting to Resume Analysis...`);
+                // Reset the input so it triggers 'onchange' even if same file is picked
+                event.target.value = '';
+                // window.location.href = "resume_analysis.html";
+            }
+        }
+
+        function resumeAnalysis() {
+            window.location.href = 'resume_analysis.html';
+        }
+
+        function finalReport() {
+            window.location.href = 'final_report.html';
+        }
+
+        function chatBot() {
+            window.location.href = 'final_report.html';
+        }
+    </script>
+
+</body>
+
+</html>

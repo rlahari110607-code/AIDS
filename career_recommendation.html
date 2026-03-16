@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Recommendation Dashboard | AI Career Guide</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@500;700&display=swap');
+
+        :root {
+            --primary: #00f2fe;
+            --secondary: #4facfe;
+            --accent: #ffcc00;
+            --success: #00e676;
+            --info: #00b0ff;
+            --bg: #0b0f19;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 80% 20%, rgba(79, 172, 254, 0.08), transparent 40%),
+                radial-gradient(circle at 20% 80%, rgba(255, 204, 0, 0.05), transparent 40%);
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            align-items: center;
+            padding: 20px 40px;
+            background: rgba(11, 15, 25, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--card-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .back-btn {
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        .back-btn:hover {
+            color: var(--primary);
+        }
+
+        nav h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            margin-left: auto;
+            margin-right: auto;
+            background: linear-gradient(135deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Dashboard Container */
+        .dashboard {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+        }
+
+        .header p {
+            font-size: 18px;
+            color: #94a3b8;
+        }
+
+        /* Dashboard Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        /* Card Stylings */
+        .action-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 30px;
+            backdrop-filter: blur(16px);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, var(--card-color-1, var(--primary)), var(--card-color-2, var(--secondary)));
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+
+        .action-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .action-card:hover::before {
+            opacity: 1;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-header h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #fff;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 16px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-action:hover {
+            background: rgba(255,255,255,0.1);
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary-action {
+            background: linear-gradient(135deg, var(--card-color-1, var(--primary)), var(--card-color-2, var(--secondary)));
+            color: #000;
+            border: none;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn-primary-action:hover {
+            background: linear-gradient(135deg, var(--card-color-2, var(--secondary)), var(--card-color-1, var(--primary)));
+            box-shadow: 0 10px 25px rgba(var(--card-color-1-rgb, 0, 242, 254), 0.4);
+            color: #000;
+        }
+
+        /* Result Panel */
+        .result-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), margin 0.3s ease, opacity 0.4s ease;
+            opacity: 0;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            margin-top: 0;
+        }
+
+        .result-panel.active {
+            max-height: 800px; /* Large enough */
+            opacity: 1;
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* Panel Specific Styles */
+        
+        /* 1. Suggestions list */
+        .career-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(0, 242, 254, 0.1);
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            color: var(--primary);
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-weight: 600;
+            margin: 5px;
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.1);
+        }
+
+        /* 2. Details Match Panel */
+        .career-detail-box {
+            background: rgba(255,255,255,0.02);
+            border-left: 3px solid var(--accent);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        .career-detail-box h4 {
+            color: #fff;
+            margin-bottom: 5px;
+            font-size: 18px;
+        }
+        .career-detail-box p {
+            font-size: 14px;
+            color: #94a3b8;
+            line-height: 1.5;
+        }
+
+        /* 3. Skill Match Bars */
+        .match-group { margin-bottom: 15px; }
+        .match-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+        .match-bar-bg {
+            height: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .match-fill {
+            height: 100%;
+            border-radius: 20px;
+            transition: width 1.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            width: 0; 
+            background: linear-gradient(90deg, #ffcc00, #ff9900);
+        }
+
+        /* 4. Alternative Flow */
+        .alt-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-family: 'Space Grotesk', sans-serif;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            padding: 20px 10px;
+        }
+        .alt-node {
+            background: rgba(0, 176, 255, 0.1);
+            border: 1px solid var(--info);
+            padding: 10px 15px;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            text-align: center;
+        }
+        .alt-arrow {
+            color: var(--info);
+            font-size: 20px;
+        }
+
+        /* 5. Save Button Form */
+        .save-career-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+        .save-career-form select, .save-career-form input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: #fff;
+            font-family: inherit;
+            font-size: 15px;
+        }
+        .save-career-form select option {
+             background: var(--bg);
+             color: #fff;
+        }
+        .save-career-form select:focus, .save-career-form input:focus {
+            outline: none;
+            border-color: var(--danger);
+        }
+        .save-action-row {
+             display: flex;
+             align-items: center;
+             justify-content: space-between;
+             margin-top: 10px;
+        }
+        .heart-btn {
+            background: rgba(0,0,0,0.5);
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            color: rgba(255,255,255,0.3);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+        .heart-btn.saved {
+            color: var(--danger);
+            background: rgba(255, 82, 82, 0.1);
+            transform: scale(1.1);
+            text-shadow: 0 0 10px rgba(255, 82, 82, 0.5);
+        }
+        .heart-btn:hover {
+            transform: scale(1.15);
+        }
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="back-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            Back to Home
+        </a>
+        <h2>Career Recommendations</h2>
+        <div style="width: 120px;"></div> 
+    </nav>
+
+    <div class="dashboard">
+        <div class="header">
+            <h1>Discover Your Path</h1>
+            <p>AI-driven career mapping tailored exactly to your unique skill set and interests.</p>
+        </div>
+
+        <div class="grid">
+            
+            <!-- 1. Suggestions -->
+            <div class="action-card" style="--card-color-1: #00f2fe; --card-color-2: #4facfe;">
+                <div class="card-header">
+                    <h3>🤖 Get Career Suggestions</h3>
+                </div>
+                <button class="btn-action btn-primary-action" onclick="generateSuggestions()">
+                    Generate Paths
+                </button>
+                <div id="panel-suggest" class="result-panel">
+                    <p style="margin-bottom: 15px; color:#cbd5e1; font-size: 14px;">Based on your upload, these roles fit you best:</p>
+                    <div id="dynamic-suggestions" style="text-align: center;">
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Career Details -->
+            <div class="action-card" style="--card-color-1: #b224ef; --card-color-2: #7579ff;">
+                <div class="card-header">
+                    <h3>📑 View Career Details</h3>
+                </div>
+                <button class="btn-action" onclick="togglePanel('panel-details')">
+                    Read Descriptions
+                </button>
+                <div id="panel-details" class="result-panel">
+                    <div id="dynamic-details">
+                         <!-- Injected via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Match Skills -->
+            <div class="action-card" style="--card-color-1: #ffcc00; --card-color-2: #ff9900;">
+                <div class="card-header">
+                    <h3>🎯 Match My Skills</h3>
+                </div>
+                <button class="btn-action" onclick="showSkillMatch()">
+                    View Compatibility
+                </button>
+                <div id="panel-match" class="result-panel">
+                    <p style="margin-bottom: 15px; color:#94a3b8; font-size: 14px;">How well your current skills align with target roles:</p>
+                    <div id="dynamic-match-bars">
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Alternative Flow -->
+            <div class="action-card" style="--card-color-1: #00b0ff; --card-color-2: #00e5ff;">
+                <div class="card-header">
+                    <h3>🔄 Explore Alternatives</h3>
+                </div>
+                <button class="btn-action" onclick="togglePanel('panel-alt')">
+                    See Similar Roles
+                </button>
+                <div id="panel-alt" class="result-panel">
+                    <p style="margin-bottom: 15px; color:#94a3b8; font-size: 14px; text-align: center;">Potential transition pathways:</p>
+                    <div class="alt-flow" id="dynamic-alt-flow">
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. Save Favorite -->
+            <div class="action-card" style="--card-color-1: #ff5252; --card-color-2: #f48fb1; grid-column: 1 / -1; max-width: 600px; margin: 0 auto; width: 100%;">
+                <div class="card-header">
+                    <h3>❤️ Save Favorite Career</h3>
+                </div>
+                <div id="dynamic-save-list">
+                    <!-- Injected via JS -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Script to Handle Dynamic Logic Based on LocalStorage -->
+    <script>
+        // Common variables
+        let primaryCareer = "Data Analyst";
+        let secondaryCareer = "Machine Learning Engineer";
+        let tertiaryCareer = "Business Intelligence Analyst";
+
+        // Logic to determine careers based on user input
+        window.addEventListener('DOMContentLoaded', () => {
+            const interestsRaw = localStorage.getItem('career_interests') || "";
+            const interests = interestsRaw.toLowerCase();
+
+            // Simple keyword matching for dynamic feel
+            if (interests.includes("web") || interests.includes("frontend") || interests.includes("fullstack")) {
+                primaryCareer = "Full Stack Developer";
+                secondaryCareer = "Frontend Engineer";
+                tertiaryCareer = "UI/UX Developer";
+            } else if (interests.includes("ai") || interests.includes("machine learning")) {
+                primaryCareer = "AI Engineer";
+                secondaryCareer = "Data Scientist";
+                tertiaryCareer = "ML Ops Engineer";
+            } else if (interests.includes("cloud") || interests.includes("devops")) {
+                primaryCareer = "Cloud Architect";
+                secondaryCareer = "DevOps Engineer";
+                tertiaryCareer = "Site Reliability Engineer";
+            } else if (interests.includes("design") || interests.includes("ui")) {
+                primaryCareer = "Product Designer";
+                secondaryCareer = "UX Researcher";
+                tertiaryCareer = "Interaction Designer";
+            }
+
+            // Populate static UI that doesn't need button clicks
+            populateDetails();
+            populateAlternatives();
+            populateSaveList();
+        });
+
+        // Toggle Panel utility
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            const isActive = panel.classList.contains('active');
+            
+            if (!isActive) {
+                panel.classList.add('active');
+            } else {
+                panel.classList.remove('active');
+            }
+        }
+
+        // 1. Suggestions Logic
+        function generateSuggestions() {
+            const container = document.getElementById('dynamic-suggestions');
+            container.innerHTML = `
+                <span class="career-badge" style="transform: scale(1.1); margin: 10px;">🏆 ${primaryCareer}</span><br>
+                <span class="career-badge">🥈 ${secondaryCareer}</span>
+                <span class="career-badge">🥉 ${tertiaryCareer}</span>
+            `;
+            
+            const btn = document.querySelector('#panel-suggest').previousElementSibling;
+            togglePanel('panel-suggest');
+            btn.innerHTML = "Generated! ✨";
+            setTimeout(()=> { btn.innerHTML = "Generate Paths"; }, 2000);
+        }
+
+        // 2. Details Logic
+        function populateDetails() {
+            const container = document.getElementById('dynamic-details');
+            container.innerHTML = `
+                <div class="career-detail-box">
+                    <h4>${primaryCareer}</h4>
+                    <p>A high-demand role focusing on exactly the skill intersections you highlighted. Requires problem-solving and domain expertise.</p>
+                </div>
+                <div class="career-detail-box" style="border-left-color: var(--secondary); opacity: 0.8;">
+                    <h4>${secondaryCareer}</h4>
+                    <p>A highly technical path leveraging your existing toolset to build scalable systems and analyze complex datasets.</p>
+                </div>
+            `;
+        }
+
+        // 3. Match Skills Logic
+        function showSkillMatch() {
+            const panel = document.getElementById('panel-match');
+            const container = document.getElementById('dynamic-match-bars');
+            
+            // Randomize match percentages for demo, weighted high
+            const m1 = Math.floor(Math.random() * 15) + 80; // 80-95
+            const m2 = Math.floor(Math.random() * 20) + 60; // 60-80
+            const m3 = Math.floor(Math.random() * 30) + 40; // 40-70
+
+            container.innerHTML = `
+                <div class="match-group">
+                    <div class="match-label"><span>${primaryCareer}</span><span>${m1}% Match</span></div>
+                    <div class="match-bar-bg"><div class="match-fill" data-width="${m1}%"></div></div>
+                </div>
+                <div class="match-group">
+                    <div class="match-label"><span>${secondaryCareer}</span><span>${m2}% Match</span></div>
+                    <div class="match-bar-bg"><div class="match-fill" style="background: linear-gradient(90deg, #4facfe, #00f2fe);" data-width="${m2}%"></div></div>
+                </div>
+                <div class="match-group">
+                    <div class="match-label"><span>${tertiaryCareer}</span><span>${m3}% Match</span></div>
+                    <div class="match-bar-bg"><div class="match-fill" style="background: linear-gradient(90deg, #b224ef, #7579ff);" data-width="${m3}%"></div></div>
+                </div>
+            `;
+
+            togglePanel('panel-match');
+            
+            // Animate bars
+            if(panel.classList.contains('active')) {
+                setTimeout(() => {
+                    panel.querySelectorAll('.match-fill').forEach(bar => {
+                        bar.style.width = bar.getAttribute('data-width');
+                    });
+                }, 50);
+            }
+        }
+
+        // 4. Alternatives Logic
+        function populateAlternatives() {
+            const container = document.getElementById('dynamic-alt-flow');
+            container.innerHTML = `
+                <div class="alt-node">${primaryCareer}</div>
+                <span class="alt-arrow">➝</span>
+                <div class="alt-node">${secondaryCareer}</div>
+                <span class="alt-arrow">➝</span>
+                <div class="alt-node" style="border-color: #64748b;">Consultant / Freelance</div>
+            `;
+        }
+
+        function populateSaveList() {
+            const container = document.getElementById('dynamic-save-list');
+            const careersToSave = [primaryCareer, secondaryCareer, tertiaryCareer, "Consultant / Freelance"];
+            
+            let optionsHtml = '';
+            careersToSave.forEach(career => {
+                 optionsHtml += `<option value="${career}">${career}</option>`;
+            });
+
+            container.innerHTML = `
+                <div class="save-career-form">
+                    <label style="color:#94a3b8; font-size:14px;">Select from AI Suggestions:</label>
+                    <select id="save-dropdown" onchange="syncCustomInput()">
+                        ${optionsHtml}
+                        <option value="custom">Other (Enter below)</option>
+                    </select>
+
+                    <label style="color:#94a3b8; font-size:14px; margin-top:10px;">Or Type Your Own Favorite:</label>
+                    <input type="text" id="save-custom-input" placeholder="e.g. Chief Technical Officer">
+
+                    <div class="save-action-row">
+                        <span id="save-status" style="color:var(--danger); font-weight:600; font-size: 14px; opacity:0; transition: opacity 0.3s;">Saved to Profile!</span>
+                        <button class="heart-btn" id="main-heart-btn" onclick="toggleSave()">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Set initial state
+            syncCustomInput();
+        }
+
+        function syncCustomInput() {
+             const dropdown = document.getElementById('save-dropdown');
+             const input = document.getElementById('save-custom-input');
+             const btn = document.getElementById('main-heart-btn');
+             const status = document.getElementById('save-status');
+
+             // Reset heart styling when changing selection
+             btn.classList.remove('saved');
+             status.style.opacity = '0';
+
+             if (dropdown.value !== 'custom') {
+                 input.value = dropdown.value;
+             } else {
+                 input.value = '';
+                 input.focus();
+             }
+        }
+
+        function toggleSave() {
+            const btn = document.getElementById('main-heart-btn');
+            const status = document.getElementById('save-status');
+            const input = document.getElementById('save-custom-input');
+
+            if (!input.value.trim()) {
+                alert("Please select or enter a career before saving.");
+                return;
+            }
+
+            btn.classList.toggle('saved');
+            
+            if (btn.classList.contains('saved')) {
+                status.innerText = `Saved "${input.value}"!`;
+                status.style.opacity = '1';
+                // In a real app, save to localStorage here
+            } else {
+                 status.style.opacity = '0';
+            }
+        }
+
+    </script>
+</body>
+</html>

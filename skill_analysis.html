@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skill Analysis Dashboard | AI Career Guide</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@500;700&display=swap');
+
+        :root {
+            --primary: #00f2fe;
+            --secondary: #4facfe;
+            --accent: #ffcc00;
+            --success: #00e676;
+            --danger: #ff5252;
+            --bg: #0b0f19;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image:
+                radial-gradient(circle at 15% 50%, rgba(79, 172, 254, 0.1), transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(0, 242, 254, 0.1), transparent 50%);
+        }
+
+        /* Navigation Minimal */
+        nav {
+            display: flex;
+            align-items: center;
+            padding: 20px 40px;
+            background: rgba(11, 15, 25, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--card-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .back-btn {
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        .back-btn:hover {
+            color: var(--primary);
+        }
+
+        nav h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            margin-left: auto;
+            margin-right: auto;
+            background: linear-gradient(135deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Dashboard Container */
+        .dashboard {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .header p {
+            font-size: 18px;
+            color: #94a3b8;
+        }
+
+        /* Dashboard Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        /* Card Stylings */
+        .action-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 30px;
+            backdrop-filter: blur(16px);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--card-color-1, var(--primary)), var(--card-color-2, var(--secondary)));
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+
+        .action-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .action-card:hover::before {
+            opacity: 1;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-header h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #fff;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-action:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.02);
+        }
+
+        .btn-primary-action {
+            background: linear-gradient(135deg, var(--card-color-1, var(--primary)), var(--card-color-2, var(--secondary)));
+            color: #000;
+            border: none;
+        }
+
+        .btn-primary-action:hover {
+            background: linear-gradient(135deg, var(--card-color-2, var(--secondary)), var(--card-color-1, var(--primary)));
+            box-shadow: 0 10px 20px rgba(0, 242, 254, 0.3);
+            color: #000;
+        }
+
+        /* The Panel that expands below each button */
+        .result-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), margin 0.3s ease, opacity 0.4s ease;
+            opacity: 0;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            margin-top: 0;
+        }
+
+        .result-panel.active {
+            max-height: 500px;
+            /* Arbitrary large height for expansion */
+            opacity: 1;
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Custom Inner Panel Styles */
+
+        /* 1. Analysis Panel */
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .tag {
+            background: rgba(0, 242, 254, 0.15);
+            color: var(--primary);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+            border: 1px solid rgba(0, 242, 254, 0.3);
+        }
+
+        .ai-feedback {
+            font-style: italic;
+            color: #cbd5e1;
+            border-left: 3px solid var(--primary);
+            padding-left: 15px;
+            margin-top: 15px;
+        }
+
+        /* 2. Industry Comparison */
+        .progress-group {
+            margin-bottom: 15px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .progress-bar-bg {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1s ease-out;
+            width: 0;
+            /* Animated via JS */
+        }
+
+        .fill-user {
+            background: var(--primary);
+        }
+
+        .fill-industry {
+            background: var(--accent);
+            opacity: 0.7;
+        }
+
+        /* 3. Strengths */
+        .strength-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px;
+            background: rgba(255, 204, 0, 0.05);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255, 204, 0, 0.1);
+        }
+
+        .strength-rank {
+            width: 30px;
+            height: 30px;
+            background: var(--accent);
+            color: #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* 4. Improve */
+        .weakness-list {
+            list-style: none;
+        }
+
+        .weakness-list li {
+            padding: 10px 0;
+            border-bottom: 1px dotted rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .weakness-list li:last-child {
+            border: none;
+        }
+
+        .weakness-list span {
+            color: var(--danger);
+            font-size: 14px;
+        }
+
+        /* 5. Update Skills */
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #fff;
+            font-family: inherit;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .save-btn {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <a href="index.html" class="back-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="m15 18-6-6 6-6" />
+            </svg>
+            Back to Home
+        </a>
+        <h2>Skill Analysis Dashboard</h2>
+        <div style="width: 120px;"></div> <!-- Spacer for center alignment -->
+    </nav>
+
+    <div class="dashboard">
+        <div class="header">
+            <h1>Your Skill Profile</h1>
+            <p>Dive deep into your capabilities, compare with the market, and chart your growth.</p>
+        </div>
+
+        <div class="grid">
+
+            <!-- 1. Analyze Skills -->
+            <div class="action-card" style="--card-color-1: #00f2fe; --card-color-2: #4facfe;">
+                <div class="card-header">
+                    <h3>🔍 Analyze My Skills</h3>
+                </div>
+                <button class="btn-action btn-primary-action" onclick="togglePanel('panel-analyze')">
+                    Run AI Analysis
+                </button>
+                <div id="panel-analyze" class="result-panel">
+                    <p style="margin-bottom: 10px; color:#cbd5e1; font-size: 14px;">Identified Key Skills:</p>
+                    <div class="skill-tags" id="dynamic-skill-tags">
+                        <!-- Tags injected via JS -->
+                        <span class="tag">Python</span>
+                    </div>
+                    <div class="ai-feedback" id="dynamic-ai-feedback">
+                        "Your profile shows a strong foundation."
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Compare Industry -->
+            <div class="action-card" style="--card-color-1: #b224ef; --card-color-2: #7579ff;">
+                <div class="card-header">
+                    <h3>📊 Compare With Industry</h3>
+                </div>
+                <button class="btn-action" onclick="togglePanel('panel-compare', true)">
+                    View Benchmarks
+                </button>
+                <div id="panel-compare" class="result-panel">
+                    <div style="display:flex; justify-content:center; gap: 20px; font-size:12px; margin-bottom: 15px;">
+                        <span style="color:var(--primary)">■ You</span>
+                        <span style="color:var(--accent)">■ Industry Avg</span>
+                    </div>
+                    <div id="dynamic-compare-bars">
+                        <!-- Bars injected via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Highlight Strengths -->
+            <div class="action-card" style="--card-color-1: #ffcc00; --card-color-2: #ff9900;">
+                <div class="card-header">
+                    <h3>⭐ Highlight My Strengths</h3>
+                </div>
+                <button class="btn-action" onclick="togglePanel('panel-strengths')">
+                    Reveal Top Skills
+                </button>
+                <div id="panel-strengths" class="result-panel">
+                    <div id="dynamic-strengths-list">
+                        <!-- Strengths injected via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Improve Weak Skills -->
+            <div class="action-card" style="--card-color-1: #ff5252; --card-color-2: #f48fb1;">
+                <div class="card-header">
+                    <h3>📈 Improve Weak Skills</h3>
+                </div>
+                <button class="btn-action" onclick="togglePanel('panel-improve')">
+                    Find Growth Areas
+                </button>
+                <div id="panel-improve" class="result-panel">
+                    <p style="font-size: 14px; color:#94a3b8; margin-bottom:15px;">Target these areas to boost your
+                        career trajectory:</p>
+                    <ul class="weakness-list">
+                        <li>Cloud Architecture (AWS/Azure) <span>Critical Gap</span></li>
+                        <li>Docker / Containerization <span>Moderate Gap</span></li>
+                        <li>Advanced Deep Learning <span>Minor Gap</span></li>
+                    </ul>
+                    <button class="btn-action btn-primary-action"
+                        style="margin-top:20px; padding:10px; font-size:14px; background:var(--danger); color:#fff"
+                        onclick="window.location.href='skill_gap.html'">
+                        Go to Skill Gap Dashboard →
+                    </button>
+                </div>
+            </div>
+
+            <!-- 5. Update Skills -->
+            <div class="action-card" style="--card-color-1: #00e676; --card-color-2: #1de9b6;">
+                <div class="card-header">
+                    <h3>✏️ Update My Skills</h3>
+                </div>
+                <button class="btn-action" onclick="togglePanel('panel-update')">
+                    Edit Profile
+                </button>
+                <div id="panel-update" class="result-panel">
+                    <div class="input-group">
+                        <label>Add New Skill</label>
+                        <input type="text" placeholder="e.g., React.js, TensorFlow, Agile">
+                    </div>
+                    <div class="input-group">
+                        <label>Years of Experience</label>
+                        <input type="number" placeholder="0" min="0">
+                    </div>
+                    <button class="btn-action btn-primary-action save-btn" onclick="saveSkills(this)">
+                        Save Changes
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Load data when page initializes
+        window.addEventListener('DOMContentLoaded', () => {
+            loadDynamicUserData();
+        });
+
+        function loadDynamicUserData() {
+            // Retrieve from localStorage
+            const interestsRaw = localStorage.getItem('career_interests') || "";
+            const skillsRaw = localStorage.getItem('career_skills') || "";
+            const levelsRaw = localStorage.getItem('career_skillLevel') || "";
+
+            // If no data is found, we keep the default UI or show a gentle fallback
+            if (!skillsRaw) {
+                document.getElementById('dynamic-ai-feedback').innerText = "Please upload your details on the Home Page to see personalized AI feedback.";
+                return;
+            }
+
+            // 1. Parse Data
+            const interests = interestsRaw.split(',').map(i => i.trim()).filter(i => i);
+            const skills = skillsRaw.split(',').map(s => s.trim()).filter(s => s);
+            
+            // Parse levels (e.g., "Python: 80%, SQL: 70%")
+            const skillLevels = [];
+            const levelPairs = levelsRaw.split(',').map(p => p.trim()).filter(p => p);
+            
+            levelPairs.forEach(pair => {
+                const parts = pair.split(':');
+                if (parts.length === 2) {
+                    const skillName = parts[0].trim();
+                    const percentageStr = parts[1].trim().replace('%', '');
+                    const percentage = parseInt(percentageStr) || 0;
+                    skillLevels.push({ name: skillName, level: percentage });
+                }
+            });
+
+            // 2. Populate Analyze Panel (Tags & Feedback)
+            const tagsContainer = document.getElementById('dynamic-skill-tags');
+            tagsContainer.innerHTML = '';
+            skills.forEach(skill => {
+                const span = document.createElement('span');
+                span.className = 'tag';
+                span.innerText = skill;
+                tagsContainer.appendChild(span);
+            });
+
+            const mainInterest = interests.length > 0 ? interests[0] : "your field";
+            document.getElementById('dynamic-ai-feedback').innerText = 
+                `"Based on your upload, you show a promising foundation in ${skills.join(', ')}. Leveraging these directly aligns well with your interest in ${mainInterest}."`;
+
+
+            // 3. Populate Compare Industry Bars
+            const compareContainer = document.getElementById('dynamic-compare-bars');
+            compareContainer.innerHTML = '';
+            
+            skillLevels.forEach(sl => {
+                // Generate a random industry average for demonstration
+                const industryAvg = Math.floor(Math.random() * (90 - 40 + 1) + 40); 
+                
+                const group = document.createElement('div');
+                group.className = 'progress-group';
+                group.innerHTML = `
+                    <div class="progress-label"><span>${sl.name}</span><span>${sl.level}% vs ${industryAvg}%</span></div>
+                    <div class="progress-bar-bg"><div class="progress-fill fill-user" data-width="${sl.level}%"></div></div>
+                    <div class="progress-bar-bg" style="height:4px; margin-top:2px"><div class="progress-fill fill-industry" data-width="${industryAvg}%"></div></div>
+                `;
+                compareContainer.appendChild(group);
+            });
+
+             // If no levels were parsed correctly, show a fallback
+            if (skillLevels.length === 0) {
+                 compareContainer.innerHTML = `<p style="color:#94a3b8; font-size:14px; text-align:center;">Could not parse skill levels. Make sure to use the format "Skill: 80%".</p>`;
+            }
+
+
+            // 4. Populate Strengths (Sort by highest percentage)
+            const strengthsContainer = document.getElementById('dynamic-strengths-list');
+            strengthsContainer.innerHTML = '';
+            
+            // Sort descending
+            const sortedSkills = [...skillLevels].sort((a, b) => b.level - a.level);
+            
+            // Take top 3
+            const topSkills = sortedSkills.slice(0, 3);
+            
+            topSkills.forEach((skill, index) => {
+                let subtitle = "Solid proficiency";
+                if(skill.level > 85) subtitle = "Top 5% among peers";
+                else if (skill.level > 70) subtitle = "Highly consistent output";
+
+                const item = document.createElement('div');
+                item.className = 'strength-item';
+                item.innerHTML = `
+                    <div class="strength-rank">${index + 1}</div>
+                    <div>
+                        <strong style="color:#fff; display:block;">${skill.name}</strong>
+                        <span style="font-size:13px; color:#94a3b8;">${subtitle}</span>
+                    </div>
+                `;
+                strengthsContainer.appendChild(item);
+            });
+
+            if (topSkills.length === 0) {
+                 strengthsContainer.innerHTML = `<p style="color:#94a3b8; font-size:14px; text-align:center;">Not enough data to determine strengths.</p>`;
+            }
+        }
+
+        function togglePanel(panelId, animateBars = false) {
+            const panel = document.getElementById(panelId);
+            const isActive = panel.classList.contains('active');
+
+            // Close all other panels (optional accordion behavior)
+            // document.querySelectorAll('.result-panel').forEach(p => p.classList.remove('active'));
+
+            if (!isActive) {
+                panel.classList.add('active');
+
+                // If it's the compare panel, animate the progress bars
+                if (animateBars) {
+                    setTimeout(() => {
+                        panel.querySelectorAll('.progress-fill').forEach(bar => {
+                            bar.style.width = bar.getAttribute('data-width');
+                        });
+                    }, 100); // slight delay to allow display block to process
+                }
+            } else {
+                panel.classList.remove('active');
+
+                // Reset bars if closing compare panel
+                if (animateBars) {
+                    panel.querySelectorAll('.progress-fill').forEach(bar => {
+                        bar.style.width = '0';
+                    });
+                }
+            }
+        }
+
+        function saveSkills(btn) {
+            btn.innerHTML = "Saving... ⏳";
+            setTimeout(() => {
+                btn.innerHTML = "Saved Successfully! ✓";
+                btn.style.background = "var(--success)";
+                setTimeout(() => {
+                    btn.innerHTML = "Save Changes";
+                    btn.style.background = "";
+                    togglePanel('panel-update');
+                }, 1500);
+            }, 800);
+        }
+    </script>
+</body>
+
+</html>
